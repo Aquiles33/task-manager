@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minlength: 8,
   },
-  session: [
+  sessions: [
     {
       token: {
         type: String,
@@ -93,7 +93,7 @@ UserSchema.statics.findByIdAndToken = function (_id, token) {
 
   return User.findOne({
     _id,
-    'session.token': token,
+    'sessions.token': token,
   });
 };
 
@@ -101,11 +101,12 @@ UserSchema.statics.findByCredentials = function (email, password) {
   let User = this;
   return User.findOne({ email }).then((user) => {
     if (!user) return Promise.reject();
-
+    
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, user.password, (err, res) => {
-        if (res) resolve(user);
-        else {
+        if (res) {
+          resolve(user);}
+          else {
           reject();
         }
       });
